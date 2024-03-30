@@ -39,9 +39,9 @@ class NFA{
 //连接NFA
 NFA concat(NFA,NFA);
 //或NFA
-NFA or_op(vector<NFA> select_NFAs, int no_of_selections);
+NFA or_op(NFA,NFA);
 //闭包NFA
-NFA kleene(NFA a);
+NFA kleene(NFA);
 //RE转NFA
 NFA re_to_nfa(void);    //这里用你的树作为输入
 

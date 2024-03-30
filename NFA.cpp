@@ -60,5 +60,42 @@ NFA concat(NFA a, NFA b){
     result.set_final_state(a.get_num_states()+b.get_num_states()-1);
 }
 
-NFA or_op()
+NFA or_op(NFA a, NFA b){
+    NFA result;
+    result.set_state(a.get_num_states()+b.get_num_states()+2);
+    int adder_begin = 1;
+    result.set_transfer(0,adder_begin,'^');
+    for(vector<Transfer>::iterator it = a.get_tran().begin(); it!=a.get_tran().end(); it++){
+        result.set_transfer(it->node_from+adder_begin, it->node_out+adder_begin, it->symbol);
+    }
+    result.set_transfer(adder_begin+a.get_num_states()-1,result.get_num_states()-1,'^');
+    adder_begin+=a.get_num_states();
+    result.set_transfer(0, adder_begin, '^');
+    for(vector<Transfer>::iterator it = b.get_tran().begin(); it != b.get_tran().end(); it++){
+        result.set_transfer(it->node_from+adder_begin, it->node_out+adder_begin, '^');
+    }
+    result.set_transfer(adder_begin+b.get_num_states()-1, result.get_num_states()-1, '^');
+    result.set_final_state(result.get_num_states()-1);
+}
+
+NFA kleene(NFA a) {
+	NFA result;
+	int i;
+	Transfer new_trans;	
+	result.set_state(a.get_num_states() + 2);
+
+	result.set_transfer(0, 1, '^');
+
+	for(i = 0; i < a.get_tran().size(); i++) {
+		new_trans = a.get_tran().at(i);
+		result.set_transfer(new_trans.node_from + 1, new_trans.node_out + 1, new_trans.symbol);
+	}
+
+	result.set_transfer(a.get_num_states(), a.get_num_states() + 1, '^');
+	result.set_transfer(a.get_num_states(), 1, '^');
+	result.set_transfer(0, a.get_num_states() + 1, '^');
+	result.set_final_state(a.get_num_states() + 1);
+	return result;
+}
+
 #endif 
